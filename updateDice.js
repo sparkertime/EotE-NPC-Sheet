@@ -5,11 +5,11 @@ function inspectField(fieldName) {
   app.alert(field.name+" is "+(field.rect[2] - field.rect[0])+"x"+(field.rect[3] - field.rect[1]));
 }
 
-function dieFieldName(skillField, dieType, position) {
-  return skillField.name + dieType + position;
+function dieFieldName(prefix, dieType, position) {
+  return prefix + dieType + position;
 }
 
-function cloneDieField(skillField, dieType, position, x, y) {
+function cloneDieField(name, dieType, x, y) {
   var oldField = this.getField(dieType);
   var newPosition = [
     x,
@@ -18,7 +18,7 @@ function cloneDieField(skillField, dieType, position, x, y) {
     y + (oldField.rect[3] - oldField.rect[1]),
   ];
 
-  var newField = this.addField(dieFieldName(skillField, dieType, position), 'button', 0, newPosition);
+  var newField = this.addField(name, 'button', 0, newPosition);
 
   newField.buttonAlignX = oldField.buttonAlignX;
   newField.buttonAlignY = oldField.buttonAlignY;
@@ -31,6 +31,7 @@ function cloneDieField(skillField, dieType, position, x, y) {
   newField.buttonSetIcon(oldField.buttonGetIcon(0), 0);
   newField.buttonSetIcon(oldField.buttonGetIcon(1), 1);
   newField.buttonSetIcon(oldField.buttonGetIcon(2), 2);
+  newField.readonly = true;
 
   return newField;
 }
@@ -42,35 +43,33 @@ var ABILITY_Y_OFFSET = 0.0;
 var DIE_BUFFER = 0.01;
 var MAX_DICE = 7;
 
-function setDice(skillField, abilities, proficiencies, topRightX, topRightY) {
+function setDice(namePrefix, abilities, proficiencies, topRightX, topRightY) {
   var currentX = topRightX;
 
   for(var i = 1; i <= MAX_DICE; i++) {
-    this.removeField(dieFieldName(skillField, 'Proficiency', i));
+    this.removeField(dieFieldName(namePrefix, 'Proficiency', i));
   }
 
   for(var i = 1; i <= proficiencies; i++) {
     currentX = currentX - PROFICIENCY_WIDTH;
-    cloneDieField(skillField, 'Proficiency', i, currentX, topRightY + PROFICIENCY_Y_OFFSET);
+    var newName = dieFieldName(namePrefix, 'Proficiency', i);
+    cloneDieField(newName, 'Proficiency', currentX, topRightY + PROFICIENCY_Y_OFFSET);
     currentX = currentX - DIE_BUFFER;
   }
 
   for(var i = 1; i <= MAX_DICE; i++) {
-    this.removeField(dieFieldName(skillField, 'Ability', i));
+    this.removeField(dieFieldName(namePrefix, 'Ability', i));
   }
 
   for(var i = 1; i <= abilities; i++) {
     currentX = currentX - ABILITY_WIDTH;
-    cloneDieField(skillField, 'Ability', i, currentX, topRightY + ABILITY_Y_OFFSET);
+    var newName = dieFieldName(namePrefix, 'Ability', i);
+    cloneDieField(newName, 'Ability', currentX, topRightY + ABILITY_Y_OFFSET);
     currentX = currentX - DIE_BUFFER;
   }
 }
 
-function updateDice(skill, characteristic) {
-  //TODO - make these arguments or derived intelligently from skill field
-  var topRightX = 670.9606314;
-  var topRightY = 551.488220;
-
+function showDice(namePrefix, skill, characteristic, topRightX, topRightY) {
   var skillField = this.getField(skill);
   var characteristicField = this.getField(characteristic);
   var skillValue = parseInt(skillField.value);
@@ -79,5 +78,14 @@ function updateDice(skill, characteristic) {
   var min = (skillValue < characteristicValue) ? skillValue : characteristicValue;
   var max = (skillValue > characteristicValue) ? skillValue : characteristicValue;
 
-  setDice(skillField, (max - min), min, topRightX, topRightY);
+  setDice(namePrefix, (max - min), min, topRightX, topRightY);
+}
+
+// showDice('CoolSkill', 'Cool', 'Presence', [670.96.., 551.48...]
+// showDiceForSkill('Cool', 'Presence')
+function showDiceForSkill(skill, characteristic) {
+  var skillField = this.getField(skill);
+  var topRightX = skillField.rect[0] + 107.5168454;
+  var topRightY = skillField.rect[1] - 0.513061738;
+  showDice(skill+'Skill', skill, characteristic, topRightX, topRightY);
 }
