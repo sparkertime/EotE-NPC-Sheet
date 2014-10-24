@@ -1,3 +1,21 @@
+function forEach(array, fn) {
+  var arrayLength = array.length;
+  for(var i = 0; i < arrayLength; i++) {
+    fn(array[i]);
+  }
+
+  return array;
+}
+
+var charsToSkills = {
+  "Brawn"     : ["Brawl", "Melee", "Athletics", "Resilience"],
+  "Agility"   : ["RangedLight", "RangedHeavy", "Gunnery", "Coordination", "PilotingPlanetary", "PilotingSpace", "Stealth"],
+  "Intellect" : ["Astrogation", "Computers", "Mechanics", "Medicine"],
+  "Cunning"   : ["Perception", "Deception", "Skulduggery", "Streetwise", "Survival"],
+  "Willpower" : ["Discipline", "Vigilance", "Coercion"],
+  "Presence"  : ["Cool", "Negotiation", "Leadership"]
+};
+
 function inspectField(fieldName) {
   var field = this.getField(fieldName);
 
@@ -85,7 +103,12 @@ function showDice(namePrefix, skill, characteristic, topRightX, topRightY) {
 // showDiceForSkill('Cool', 'Presence')
 function showDiceForSkill(skill, characteristic) {
   var skillField = this.getField(skill);
-  var topRightX = skillField.rect[0] + 107.5168454;
+  var topRightX = skillField.rect[0] + 75.0;
   var topRightY = skillField.rect[1] - 0.513061738;
   showDice(skill+'Skill', skill, characteristic, topRightX, topRightY);
+}
+
+function refreshAllForCharacteristic(characteristic) {
+  var skills = charsToSkills[characteristic];
+  forEach(skills, function(s) { showDiceForSkill(s, characteristic) });
 }
