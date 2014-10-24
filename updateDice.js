@@ -13,7 +13,7 @@ var charsToSkills = {
   "Intellect" : ["Astrogation", "Computers", "Mechanics", "Medicine"],
   "Cunning"   : ["Perception", "Deception", "Skulduggery", "Streetwise", "Survival"],
   "Willpower" : ["Discipline", "Vigilance", "Coercion"],
-  "Presence"  : ["Cool", "Negotiation", "Leadership"]
+  "Presence"  : ["Cool", "Negotiation", "Leadership", "Charm"]
 };
 
 function inspectField(fieldName) {
