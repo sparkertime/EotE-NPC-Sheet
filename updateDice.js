@@ -130,6 +130,7 @@ function showDiceForAttack(attackFieldName) {
 
   if(attackSkillField.value == ' ') {
     removeAllDice(namePrefix);
+    return;
   }
 
   var skill = ATTACK_SKILLS[attackSkillField.value][0];
