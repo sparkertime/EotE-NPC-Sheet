@@ -1,3 +1,10 @@
+var PROFICIENCY_WIDTH = 7.6535644;
+var PROFICIENCY_Y_OFFSET = -0.5;
+var ABILITY_WIDTH = 5.734069;
+var ABILITY_Y_OFFSET = 0.0;
+var DIE_BUFFER = 0.01;
+var MAX_DICE = 7;
+
 function forEach(array, fn) {
   var arrayLength = array.length;
   for(var i = 0; i < arrayLength; i++) {
@@ -5,6 +12,19 @@ function forEach(array, fn) {
   }
 
   return array;
+}
+
+function dieFieldName(prefix, dieType, position) {
+  return prefix + dieType + position;
+}
+
+function removeAllDice(namePrefix) {
+  for(var i = 1; i <= MAX_DICE; i++) {
+    this.removeField(dieFieldName(namePrefix, 'Proficiency', i));
+  }
+  for(var i = 1; i <= MAX_DICE; i++) {
+    this.removeField(dieFieldName(namePrefix, 'Ability', i));
+  }
 }
 
 var charsToSkills = {
@@ -21,10 +41,6 @@ function inspectField(fieldName) {
 
   app.alert(field.name+" is at "+field.rect[0]+", "+field.rect[1]);
   app.alert(field.name+" is "+(field.rect[2] - field.rect[0])+"x"+(field.rect[3] - field.rect[1]));
-}
-
-function dieFieldName(prefix, dieType, position) {
-  return prefix + dieType + position;
 }
 
 function cloneDieField(name, dieType, x, y) {
@@ -54,29 +70,16 @@ function cloneDieField(name, dieType, x, y) {
   return newField;
 }
 
-var PROFICIENCY_WIDTH = 7.6535644;
-var PROFICIENCY_Y_OFFSET = -0.5;
-var ABILITY_WIDTH = 5.734069;
-var ABILITY_Y_OFFSET = 0.0;
-var DIE_BUFFER = 0.01;
-var MAX_DICE = 7;
-
 function setDice(namePrefix, abilities, proficiencies, topRightX, topRightY) {
   var currentX = topRightX;
 
-  for(var i = 1; i <= MAX_DICE; i++) {
-    this.removeField(dieFieldName(namePrefix, 'Proficiency', i));
-  }
+  removeAllDice(namePrefix);
 
   for(var i = 1; i <= proficiencies; i++) {
     currentX = currentX - PROFICIENCY_WIDTH;
     var newName = dieFieldName(namePrefix, 'Proficiency', i);
     cloneDieField(newName, 'Proficiency', currentX, topRightY + PROFICIENCY_Y_OFFSET);
     currentX = currentX - DIE_BUFFER;
-  }
-
-  for(var i = 1; i <= MAX_DICE; i++) {
-    this.removeField(dieFieldName(namePrefix, 'Ability', i));
   }
 
   for(var i = 1; i <= abilities; i++) {
@@ -111,4 +114,28 @@ function showDiceForSkill(skill, characteristic) {
 function refreshAllForCharacteristic(characteristic) {
   var skills = charsToSkills[characteristic];
   forEach(skills, function(s) { showDiceForSkill(s, characteristic) });
+}
+
+var ATTACK_SKILLS = {
+  "Brawl"         : ["Brawl", "Brawn"],
+  "Melee"         : ["Melee", "Brawn"],
+  "Ranged: Light" : ["RangedLight", "Agility"],
+  "Ranged: Heavy" : ["RangedHeavy", "Agility"],
+  "Gunnery"       : ["Gunnery", "Agility"],
+}
+
+function showDiceForAttack(attackFieldName) {
+  var attackSkillField = this.getField(attackFieldName);
+  var namePrefix = attackFieldName+'Attack';
+
+  if(attackSkillField.value == ' ') {
+    removeAllDice(namePrefix);
+  }
+
+  var skill = ATTACK_SKILLS[attackSkillField.value][0];
+  var characteristic = ATTACK_SKILLS[attackSkillField.value][1];
+  var topRightX = attackSkillField.rect[0] + 58.0;
+  var topRightY = attackSkillField.rect[1] - 10;
+
+  showDice(namePrefix, skill, characteristic, topRightX, topRightY);
 }
