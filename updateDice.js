@@ -180,7 +180,7 @@ function showDiceForAttack(attackFieldName) {
 
   var skill = ATTACK_SKILLS[attackSkillField.value][0];
   var characteristic = ATTACK_SKILLS[attackSkillField.value][1];
-  var topRightX = attackSkillField.rect[0] + 58.0;
+  var topRightX = attackSkillField.rect[0] + 49.0;
   var topRightY = attackSkillField.rect[1] - 10;
 
   showDice(namePrefix, skill, characteristic, topRightX, topRightY);
