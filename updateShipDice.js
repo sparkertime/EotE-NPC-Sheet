@@ -106,37 +106,53 @@ function setDice(namePrefix, abilities, proficiencies, boosts, setbacks, topRigh
   }
 }
 
-function parseSkill(rawValue) {
+function parseRoll(unformattedRoll) {
   var boosts = 0;
   var setbacks = 0;
-  for(var i = 0; i < rawValue.length; i++) {
-    if(rawValue[i] == '+') {
+  var roll = unformattedRoll.split(' ').join('');
+
+  var lowRoll = [];
+  var highRoll = [];
+  var parsingHigh = true;
+
+  for(var i = 0; i < roll.length; i++) {
+    var char = roll[i];
+
+    if(char == '+') {
       boosts += 1;
-    }
-    if(rawValue[i] == '-') {
+    } else if(char == '-') {
       setbacks += 1;
+    } else if(isNaN(char)) {
+      parsingHigh = false;
+    } else if(parsingHigh) {
+      highRoll.push(char);
+    } else {
+      lowRoll.push(char);
     }
+
   }
 
   return {
     boosts: boosts,
     setbacks: setbacks,
-    rank: parseInt(rawValue)
+    top: parseInt(highRoll.join('')),
+    bottom: parseInt(lowRoll.join('')),
   };
 }
 
-function showDice(rollField, topRightX, topRightY) {
+function showDice(fieldName, topRightX, topRightY) {
+  var rollField = this.getField(fieldName);
   var roll = parseRoll(rollField.value);
 
   var min = (roll.top < roll.bottom) ? roll.top : roll.bottom;
   var max = (roll.top > roll.bottom) ? roll.top : roll.bottom;
 
-  setDice(namePrefix, (max - min), min, skill.boosts, skill.setbacks, topRightX, topRightY);
+  setDice(fieldName, (max - min), min, roll.boosts, roll.setbacks, topRightX, topRightY);
 }
 
 function showDiceForRoll(fieldName) {
   var rollField = this.getField(fieldName);
-  var topRightX = skillField.rect[0] + 75.0;
-  var topRightY = skillField.rect[1] - 0.513061738;
-  showDice(rollField, topRightX, topRightY);
+  var topRightX = rollField.rect[0] + 75.0;
+  var topRightY = rollField.rect[1] - 0.513061738;
+  showDice(fieldName, topRightX, topRightY);
 }
