@@ -152,7 +152,7 @@ function showDice(fieldName, topRightX, topRightY) {
 
 function showDiceForRoll(fieldName) {
   var rollField = this.getField(fieldName);
-  var topRightX = rollField.rect[0] + 75.0;
+  var topRightX = rollField.rect[0] + 95.0;
   var topRightY = rollField.rect[1] - 0.513061738;
   showDice(fieldName, topRightX, topRightY);
 }
