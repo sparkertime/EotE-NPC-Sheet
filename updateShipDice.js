@@ -23,18 +23,24 @@ function dieFieldName(prefix, dieType, position) {
   return prefix + dieType + position;
 }
 
+function remove(fieldName) {
+  if(this.getField(fieldName)) {
+    this.removeField(fieldName);
+  }
+}
+
 function removeAllDice(namePrefix) {
   for(var i = 1; i <= MAX_BOOST; i++) {
-    this.removeField(dieFieldName(namePrefix, 'Setback', i));
+    remove(dieFieldName(namePrefix, 'Setback', i));
   }
   for(var i = 1; i <= MAX_BOOST; i++) {
-    this.removeField(dieFieldName(namePrefix, 'Boost', i));
+    remove(dieFieldName(namePrefix, 'Boost', i));
   }
   for(var i = 1; i <= MAX_DICE; i++) {
-    this.removeField(dieFieldName(namePrefix, 'Proficiency', i));
+    remove(dieFieldName(namePrefix, 'Proficiency', i));
   }
   for(var i = 1; i <= MAX_DICE; i++) {
-    this.removeField(dieFieldName(namePrefix, 'Ability', i));
+    remove(dieFieldName(namePrefix, 'Ability', i));
   }
 }
 
